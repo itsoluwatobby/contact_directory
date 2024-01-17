@@ -1,0 +1,16 @@
+import multer, { StorageEngine, diskStorage } from "multer";
+import process from 'process'
+import Express from 'express'
+
+const pathname = process.cwd()+'\\fileUpload'
+
+const storage: StorageEngine = diskStorage({
+  destination: function(req: Express.Request, file: Express.Multer.File, cb){
+    cb(null, pathname)
+  },
+  filename: function(req: Express.Request, file: Express.Multer.File, cb){
+    cb(null, file.originalname)
+  }
+})
+
+export const upload = multer({storage: storage})
