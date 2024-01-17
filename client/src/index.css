@@ -1,7 +1,16 @@
-@tailwind utilities;
 @tailwind base;
+@tailwind utilities;
 @tailwind components;
 
 body{
+  min-height: 100dvh;
+}
+h1, h2, h3, h4, h5 {
   text-wrap: balance;
+}
+p {
+  text-wrap: balance;
+}
+::-webkit-scrollbar {
+  width: 2px;
 }

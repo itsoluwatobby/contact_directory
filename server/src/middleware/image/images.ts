@@ -1,6 +1,6 @@
 import multer, { StorageEngine, diskStorage } from "multer";
 import process from 'process'
-import Express from 'express'
+
 
 const pathname = process.cwd()+'\\fileUpload'
 
