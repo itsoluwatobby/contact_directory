@@ -11,7 +11,7 @@ export class AppRouter {
     this.router.get('/:contactId', (req: ContactRequest, res: Response) => this.contactController.getSingleContact(req, res));
     this.router.post('/create', (req: ContactRequest, res: Response) => this.contactController.createContact(req, res));
     this.router.patch('/view_contact/:contactId', (req: ContactRequest, res: Response) => this.contactController.viewContact(req, res));
-    this.router.put('/update_contact/:contactId/:ipAddress', (req: ContactRequest, res: Response) => this.contactController.updateContact(req, res));
+    this.router.put('/update_contact', (req: ContactRequest, res: Response) => this.contactController.updateContact(req, res));
     this.router.delete('/delete/:contactId', (req: ContactRequest, res: Response) => this.contactController.deleteContact(req, res));
   }
 }

@@ -31,6 +31,10 @@ export class ResponseObj {
     const status_code = this.HTTP_STATUS_CODES.forbidden;
     return res.status(status_code).json({ status: status_code, message });
   }
+  public notFoundResponse(res: Response, message: string) {
+    const status_code = this.HTTP_STATUS_CODES.not_found;
+    return res.status(status_code).json({ status: status_code, message });
+  }
   public resourceConflictResponse(res: Response, message: string, DATA: object={}) {
     const status_code = this.HTTP_STATUS_CODES.conflict;
     return res.status(status_code).json({ status: status_code, message, DATA });
