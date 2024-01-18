@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
+import { nanoid } from 'nanoid';
+import { imageStorage } from './firebase';
+
 export const reduceTextLength = (content: string, maxLength=20, option:('letter'|'word')='letter') => {
   let responseOutput = '';
   if(option === 'letter'){
@@ -49,4 +54,51 @@ export function sanitizeEntries<T extends object>(entries: T): T {
     else return [key, value]
   })
   return Object.fromEntries(sanitizedValues)
+}
+
+export const imageUpload = (image: File): Promise<ImageReturnType> => {
+  return new Promise((resolve, reject) => {
+    const photoName = `${image.name}-${nanoid(5)}`
+    const storageRef = ref(imageStorage, `contact_photos/${photoName}`)
+    const uploadTask = uploadBytesResumable(storageRef, image)
+    uploadTask.on('state_changed', (snap: any) => {
+      void(snap)
+    },(error: any) => {
+        void(error)
+        reject({status: "failed", url: ''})
+      }, 
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref)
+        .then((downloadUrl: string) => {
+          return resolve({status: 'success', url: downloadUrl})
+        })
+        .catch((error: any) => {
+          void(error)
+          return reject({status: 'failed', url: ''})
+        })
+      }
+    )
+  })
+}
+
+export function toggleAttributes(parsedObj: Partial<AppModalType>, toggleValue: Toggle): Partial<AppModalType> {
+  const res = Object.fromEntries(Object.keys(parsedObj).map((key) => {
+    return [key, toggleValue]
+  }))
+  return res
+}
+
+export const switchModals: Record<Modals, (arg: AppModalType) => AppModalType> = {
+  'addContact'(prev: AppModalType) {
+    const { addContact, ...rest } = prev;
+    return { addContact, ...toggleAttributes(rest, 'CLOSE') } as AppModalType;
+  },
+  'viewContact'(prev: AppModalType) {
+    const { viewContact, ...rest } = prev;
+    return { viewContact, ...toggleAttributes(rest, 'CLOSE') } as AppModalType;
+  },
+  'sideBar'(prev: AppModalType) {
+    const { sideBar, ...rest } = prev;
+    return { sideBar, ...toggleAttributes(rest, 'CLOSE') } as AppModalType;
+  }
 }

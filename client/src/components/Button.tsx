@@ -12,7 +12,7 @@ export const Button = ({ textValue, handleClick, textSize='text-sm', padding, bg
   return (
     <button 
       onClick={handleClick}
-      className={`whitespace-nowrap rounded-[3px] focus:outline-0 hover:opacity-90 active:opacity-100 transition-opacity ${textSize} ${padding.py} ${padding.px} ${bgColor}`}
+      className={`whitespace-nowrap text-white rounded-[3px] focus:outline-0 hover:opacity-90 active:opacity-100 transition-opacity ${textSize} ${padding.py} ${padding.px} ${bgColor}`}
       >
         {textValue}
     </button>
