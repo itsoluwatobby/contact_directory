@@ -1,5 +1,5 @@
 
-const allowedUrls = ['http://localhost:5000']
+const allowedUrls = ['http://localhost:5173']
 
 export const corsOptions = {
   origin: (origin: any, callback:(a:any, b:any) => void) => {

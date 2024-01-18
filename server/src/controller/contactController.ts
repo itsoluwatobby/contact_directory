@@ -3,11 +3,13 @@ import { ContactService } from "../service/contactService.js";
 import { ContactObj, ContactRequest } from "../types/types.js";
 import { ResponseObj } from "../service/response.js";
 import { sanitizeEntries, wrapperFunc } from "../utils/helpers.js";
+import { logger } from "../config/logger.js";
 
 
 export class ContactController {
   private contactService = new ContactService()
   private response = new ResponseObj()
+  // private logger = logger
 
   constructor() {}
 
@@ -17,12 +19,18 @@ export class ContactController {
       const ipAddress = req.ip
       const { firstName, lastName, imageUrl, gender } = contactDetails
       if (!firstName || !lastName || !imageUrl || !gender) {
-        return this.response.badRequestResponse(res, 'FirstName, LastName and Image required')
+        const msg = 'FirstName, LastName and Image required'
+        logger.error(msg);
+        return this.response.badRequestResponse(res, msg)
       } 
       const sanitizeContact = sanitizeEntries({...contactDetails, ipAddress}) as ContactObj
-      this.contactService.createContact(sanitizeContact, (err: any, data: ContactObj) => {
-        if (err) return this.response.resourceConflictResponse(res, err.message)
-        return this.response.successResponse(res, 'Contact created', { ...data })
+      this.contactService.createContact(sanitizeContact, (err: any, data: any) => {
+        if (err) {
+          logger.error(err.message);
+          return this.response.resourceConflictResponse(res, err.message)
+        }
+        logger.info('Contact created');
+        return this.response.successResponse(res, 'Contact created', { data: data._doc })
       })
     })
   }
@@ -30,11 +38,19 @@ export class ContactController {
     wrapperFunc(res, () => {
       const { contactId } = req.params
       if (!contactId) {
+        logger.error('Contact ID required');
         return this.response.badRequestResponse(res, 'Contact ID required')
       } 
       this.contactService.view({ _id: contactId }, (err: any, data: ContactObj) => {
-        if (err) return this.response.mongoErrorResponse(res, err.message)
-        if (!data) return this.response.notFoundResponse(res, 'contact not found')
+        if (err) {
+          logger.error(err.message);
+          return this.response.mongoErrorResponse(res, err.message)
+        }
+        if (!data) {
+          logger.error('contact not found')
+          return this.response.notFoundResponse(res, 'contact not found')
+        }
+        logger.info('Contact viewed');
         return this.response.successResponse(res, 'Contact viewed', { ...data })
       })
     })
@@ -42,9 +58,17 @@ export class ContactController {
   public getAllContacts(req: ContactRequest, res: Response) {
     wrapperFunc(res, () => {
       this.contactService.getContacts({}, (err: any, data: ContactObj[]) => {
-        if (err) return this.response.mongoErrorResponse(res, err.message)
-        if (!data.length) return this.response.successResponse(res, 'Empty contact list', {})
-        return this.response.successResponse(res, 'Success', { count: data.length, data: { ...data } })
+        if (err) {
+          logger.error(err.message);
+          return this.response.mongoErrorResponse(res, err.message);
+        }
+        if (!data.length) {
+          const msg = 'Empty contact list';
+          logger.error(msg);
+          return this.response.successResponse(res, msg, {});
+        }
+        logger.info('Success');
+        return this.response.successResponse(res, 'Success', { count: data.length, data: { ...data } });
       })
     })
   }
@@ -52,11 +76,19 @@ export class ContactController {
     wrapperFunc(res, () => {
       const { contactId } = req.params
       if (!contactId) {
-        return this.response.badRequestResponse(res, 'Contact ID required')
+        logger.error('Contact ID required');
+        return this.response.badRequestResponse(res, 'Contact ID required');
       } 
       this.contactService.getContact({ _id: contactId }, (err: any, data: ContactObj) => {
-        if (err) return this.response.mongoErrorResponse(res, err.message)
-        if (!data) return this.response.notFoundResponse(res, 'contact not found')
+        if (err) {
+          logger.error(err.message);
+          return this.response.mongoErrorResponse(res, err.message);
+        }
+        if (!data) {
+          logger.error('Contact not found')
+          return this.response.notFoundResponse(res, 'contact not found');
+        }
+        logger.info('Contact fetched')
         return this.response.successResponse(res, 'Contact fetched', { ...data })
       })
     })
@@ -65,12 +97,18 @@ export class ContactController {
     wrapperFunc(res, () => {
       const contactUpdate = req.body
       if (contactUpdate.ipAddress !== req.ip) {
-        return this.response.unauthorizedResponse(res, "You don't have the WRITE access to this document")
+        const msg = "You don't have the WRITE access to this document"
+        logger.error(msg);
+        return this.response.unauthorizedResponse(res, msg);
       }
       const sanitizeContact = sanitizeEntries(contactUpdate) as ContactObj
       this.contactService.updateContact({ _id: contactUpdate._id as string }, sanitizeContact, (err: any, UpdatedData: ContactObj) => {
-        if (err) return this.response.mongoErrorResponse(res, err.message)
-        return this.response.successUpdateResponse(res, 'Contact updated', { ...UpdatedData })
+        if (err) {
+          logger.error(err.message);
+          return this.response.mongoErrorResponse(res, err.message);
+        }
+        logger.info('Contact updated');
+        return this.response.successUpdateResponse(res, 'Contact updated', { ...UpdatedData });
       })
     })
   }
@@ -78,11 +116,20 @@ export class ContactController {
     wrapperFunc(res, () => {
       const { contactId } = req.params
       if (!contactId) {
-        return this.response.badRequestResponse(res, 'Contact ID required')
+        logger.error('Contact ID required');
+        return this.response.badRequestResponse(res, 'Contact ID required');
       } 
-      this.contactService.deleteContact({ _id: contactId }, (err: any,  data: any) => {
-        if (err) return this.response.mongoErrorResponse(res, err.message)
-        return this.response.successDeleteResponse(res, 'Contact deleted', {_id: data._id})
+      this.contactService.deleteContact({ _id: contactId }, (err: any,  data: ContactObj) => {
+        if (err) {
+          logger.error(err.message);
+          return this.response.mongoErrorResponse(res, err.message);
+        }
+        if (!data) {
+          logger.error('Contact not found')
+          return this.response.notFoundResponse(res, 'contact not found');
+        }
+        logger.info('Contact deleted');
+        return this.response.successDeleteResponse(res, 'Contact deleted', {_id: data._id});
       })
     })
   }

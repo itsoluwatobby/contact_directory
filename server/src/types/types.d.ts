@@ -1,6 +1,8 @@
 import { Request } from "express";
 import { Document, Model, Types } from "mongoose";
 
+type METHODS = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+
 type ModelType<T> = Model<T, {}, {}, {}, Document<unknown, {}, T> & T & {
   _id: Types.ObjectId;
 }, any>
