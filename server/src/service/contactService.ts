@@ -5,7 +5,7 @@ export class ContactService {
 
   constructor() {}
 
-  public getContacts(filter: Record<string, string>={}, cb: (err: any, data: ContactObj[] | ContactObj) => any) {
+  public getContacts(filter: Record<string, string>={}, cb: (err: any, data: ContactObj[]) => any) {
     Contacts.find(filter, cb)
   }
   public getContact(filter: Record<string, string>, cb: (err: any, data: ContactObj) => any) {
