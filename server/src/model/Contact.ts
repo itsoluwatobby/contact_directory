@@ -8,11 +8,11 @@ const SocialMedia = new Schema({
 
 const ContactModel = new Schema(
   {
-    firstName: { type: String, required: [true, 'First name is required'], trim: true }, 
-    lastName: { type: String, required: [true, 'Last name is required'], trim: true }, 
+    firstName: { type: String, trim: true }, 
+    lastName: { type: String, trim: true }, 
     email: { type: String, unique: true, trim: true },
-    ipAddress: { type: String, required: [true, 'IP address is required'] },
-    imageUrl: { type: String, required: [true, 'Image is required'] },
+    ipAddress: { type: String },
+    imageUrl: { type: String },
     occupation: String,
     address: String,
     country: String,
@@ -20,6 +20,7 @@ const ContactModel = new Schema(
     gender: { type: String, default: 'Undecided', enum: ['Male', 'Female', 'Undecided'] },
     viewsCount: { type: Number, default: 0 },
     socialMediaAccounts: [SocialMedia],
+    owner: { type: String, trim: true }
   },
   {
     timestamps: true

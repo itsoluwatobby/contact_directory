@@ -33,6 +33,7 @@ interface ContactObj extends Document {
   firstName: string; 
   lastName: string; 
   email?: string;
+  owner?: string;
   occupation?: string;
   ipAddress: string,
   imageUrl: string,

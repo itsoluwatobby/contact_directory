@@ -13,6 +13,26 @@ export class ContactController {
 
   constructor() {}
 
+  public getStarted(req: ContactRequest, res: Response) {
+    wrapperFunc(res, () => {
+      const { email } = req.body
+      if (!email) {
+        const msg = 'email required'
+        logger.error(msg);
+        return this.response.badRequestResponse(res, msg)
+      } 
+      const sanitizeContact = sanitizeEntries({ owner: email }) as ContactObj
+      this.contactService.createContact(sanitizeContact, (err: any, data: any) => {
+        if (err) {
+          logger.error(err.message);
+          return this.response.resourceConflictResponse(res, err.message)
+        }
+        logger.info('Registered');
+        return this.response.successResponse(res, 'Contact created', { data: data._doc })
+      })
+    })
+  }
+
   public createContact(req: ContactRequest, res: Response) {
     wrapperFunc(res, () => {
       const contactDetails = req.body
@@ -57,7 +77,8 @@ export class ContactController {
   }
   public getAllContacts(req: ContactRequest, res: Response) {
     wrapperFunc(res, () => {
-      this.contactService.getContacts({}, (err: any, data: ContactObj[]) => {
+      const { ipAddress } = req.params;
+      this.contactService.getContacts({ ipAddress }, (err: any, data: ContactObj[]) => {
         if (err) {
           logger.error(err.message);
           return this.response.mongoErrorResponse(res, err.message);
