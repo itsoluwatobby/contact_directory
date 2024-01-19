@@ -51,7 +51,7 @@ export class ContactController {
           return this.response.notFoundResponse(res, 'contact not found')
         }
         logger.info('Contact viewed');
-        return this.response.successResponse(res, 'Contact viewed', { ...data })
+        return this.response.successResponse(res, 'Contact viewed', { data })
       })
     })
   }
@@ -68,28 +68,28 @@ export class ContactController {
           return this.response.successResponse(res, msg, {});
         }
         logger.info('Success');
-        return this.response.successResponse(res, 'Success', { count: data.length, data: { ...data } });
+        return this.response.successResponse(res, 'Success', { data });
       })
     })
   }
   public getSingleContact(req: ContactRequest, res: Response) {
     wrapperFunc(res, () => {
-      const { contactId } = req.params
-      if (!contactId) {
+      const { email } = req.params
+      if (!email) {
         logger.error('Contact ID required');
         return this.response.badRequestResponse(res, 'Contact ID required');
       } 
-      this.contactService.getContact({ _id: contactId }, (err: any, data: ContactObj) => {
+      this.contactService.getContact({ email }, (err: any, data: ContactObj) => {
         if (err) {
           logger.error(err.message);
           return this.response.mongoErrorResponse(res, err.message);
         }
         if (!data) {
           logger.error('Contact not found')
-          return this.response.notFoundResponse(res, 'contact not found');
+          return this.response.successResponse(res, 'contact not found', { status: 'NOT_AVAILABLE' });
         }
         logger.info('Contact fetched')
-        return this.response.successResponse(res, 'Contact fetched', { ...data })
+        return this.response.successResponse(res, 'Contact fetched', { status: 'CONFLICT' })
       })
     })
   }
@@ -108,7 +108,7 @@ export class ContactController {
           return this.response.mongoErrorResponse(res, err.message);
         }
         logger.info('Contact updated');
-        return this.response.successUpdateResponse(res, 'Contact updated', { ...UpdatedData });
+        return this.response.successUpdateResponse(res, 'Contact updated', { data: UpdatedData });
       })
     })
   }

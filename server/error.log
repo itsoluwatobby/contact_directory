@@ -1,5 +1,31 @@
-2024-01-18T12:18:01.408Z [CONTACT] ERROR: Empty contact list
-2024-01-18T12:24:05.889Z [CONTACT] ERROR: Contact not found
-2024-01-18T12:24:13.695Z [CONTACT] ERROR: Contact not found
-2024-01-18T12:24:20.263Z [CONTACT] ERROR: Empty contact list
-2024-01-18T12:27:01.707Z [CONTACT] ERROR: Empty contact list
+2024-01-19T11:28:22.016Z [CONTACT] ERROR: Cast to ObjectId failed for value ":" (type string) at path "_id" for model "contacts"
+2024-01-19T11:28:23.595Z [CONTACT] ERROR: Cast to ObjectId failed for value ":" (type string) at path "_id" for model "contacts"
+2024-01-19T11:28:24.693Z [CONTACT] ERROR: Cast to ObjectId failed for value ":" (type string) at path "_id" for model "contacts"
+2024-01-19T11:28:24.960Z [CONTACT] ERROR: Cast to ObjectId failed for value ":" (type string) at path "_id" for model "contacts"
+2024-01-19T11:28:52.049Z [CONTACT] ERROR: Cast to ObjectId failed for value ":" (type string) at path "_id" for model "contacts"
+2024-01-19T11:28:58.864Z [CONTACT] ERROR: Cast to ObjectId failed for value ":" (type string) at path "_id" for model "contacts"
+2024-01-19T11:31:16.308Z [CONTACT] ERROR: Cast to ObjectId failed for value ":65a919776a8ed0311d184a93" (type string) at path "_id" for model "contacts"
+2024-01-19T11:35:53.726Z [CONTACT] ERROR: Cast to ObjectId failed for value "contactId" (type string) at path "_id" for model "contacts"
+2024-01-19T11:36:41.231Z [CONTACT] ERROR: Cast to ObjectId failed for value "577465666567575" (type string) at path "_id" for model "contacts"
+2024-01-19T11:36:47.257Z [CONTACT] ERROR: Cast to ObjectId failed for value "65478577465666567575" (type string) at path "_id" for model "contacts"
+2024-01-19T11:38:27.266Z [CONTACT] ERROR: Cast to ObjectId failed for value "65478577465666567575" (type string) at path "_id" for model "contacts"
+2024-01-19T11:38:28.943Z [CONTACT] ERROR: Cast to ObjectId failed for value "65478577465666567575" (type string) at path "_id" for model "contacts"
+2024-01-19T11:38:39.269Z [CONTACT] ERROR: Cast to ObjectId failed for value "65478577465666567575" (type string) at path "_id" for model "contacts"
+2024-01-19T11:38:42.376Z [CONTACT] ERROR: Cast to ObjectId failed for value "65478577465666567575" (type string) at path "_id" for model "contacts"
+2024-01-19T11:39:00.460Z [CONTACT] ERROR: Cast to ObjectId failed for value "65478577465666567575" (type string) at path "_id" for model "contacts"
+2024-01-19T11:39:05.521Z [CONTACT] ERROR: Cast to ObjectId failed for value "65478577465666567575" (type string) at path "_id" for model "contacts"
+2024-01-19T11:39:29.160Z [CONTACT] ERROR: Cast to ObjectId failed for value "65478577465666567575" (type string) at path "_id" for model "contacts"
+2024-01-19T12:11:38.491Z [CONTACT] ERROR: You don't have the WRITE access to this document
+2024-01-19T12:12:16.552Z [CONTACT] ERROR: You don't have the WRITE access to this document
+2024-01-19T12:13:50.962Z [CONTACT] ERROR: You don't have the WRITE access to this document
+2024-01-19T12:16:26.812Z [CONTACT] ERROR: You don't have the WRITE access to this document
+2024-01-19T12:17:33.147Z [CONTACT] ERROR: You don't have the WRITE access to this document
+2024-01-19T12:20:40.038Z [CONTACT] ERROR: You don't have the WRITE access to this document
+2024-01-19T12:20:45.904Z [CONTACT] ERROR: You don't have the WRITE access to this document
+2024-01-19T12:20:54.186Z [CONTACT] ERROR: You don't have the WRITE access to this document
+2024-01-19T12:20:56.114Z [CONTACT] ERROR: You don't have the WRITE access to this document
+2024-01-19T12:21:21.148Z [CONTACT] ERROR: You don't have the WRITE access to this document
+2024-01-19T12:21:42.601Z [CONTACT] ERROR: You don't have the WRITE access to this document
+2024-01-19T12:22:36.733Z [CONTACT] ERROR: You don't have the WRITE access to this document
+2024-01-19T12:23:34.096Z [CONTACT] ERROR: You don't have the WRITE access to this document
+2024-01-19T12:24:42.919Z [CONTACT] ERROR: You don't have the WRITE access to this document
