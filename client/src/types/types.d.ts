@@ -7,14 +7,27 @@ type ChildrenProps = {
   children: React.ReactNode;
 }
 
+type EditContact = {
+  edit: boolean;
+  contact: ContactObjType;
+}
+type ViewDetailType = {
+  isLoading: boolean;
+  isError: boolean;
+  contact: ContactObjType;
+}
 type Modals = 'addContact' | 'viewContact' | 'sideBar';
 type AppModalType = Record<Modals, Toggle>;
 
 type ContactContextType = {
   darkMode: Theme;
   appModal: AppModalType;
+  editContact: EditContact;
+  viewDetail: ViewDetailType;
   setDarkMode: React.Dispatch<React.SetStateAction<Theme>>;
   setAppModal: React.Dispatch<React.SetStateAction<AppModalType>>;
+  setEditContact: React.Dispatch<React.SetStateAction<EditContact>>;
+  setViewDetail: React.Dispatch<React.SetStateAction<ViewDetailType>>;
 }
 
 type ImageReturnType = { status: string, url: string };
@@ -31,7 +44,7 @@ type AppState = {
   success: boolean;
 }
 
-
+type ConflictType = 'NOT_AVAILABLE' | 'CONFLICT';
 type Gender = 'Male' | 'Female' | 'Undecided';
 type ContactObjType = {
   _id?: string;

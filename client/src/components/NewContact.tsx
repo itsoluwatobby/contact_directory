@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useState } from 'react'
-import { MAX_FILE_SIZE, MAX_TEXT, initAppState, initContactObj } from '../utils/constants'
+import { MAX_FILE_SIZE, MAX_TEXT, initAppState, initContactObj, initEditContact } from '../utils/constants'
 import { imageUpload, sanitizeEntries } from '../utils/helpers';
 import { imageStorage } from '../utils/firebase';
 import { deleteObject, ref } from 'firebase/storage';
@@ -9,16 +9,21 @@ import { EnterText } from './EnterText';
 import { FaTimesCircle } from 'react-icons/fa';
 import { toast } from "react-toastify";
 import { LoadingSpinner } from './Loading';
+import { useSWRConfig } from 'swr';
+import { addContact, contactEndpoint, updateContact } from '../api/axios';
 
 
 export const NewContact = () => {
+  const { mutate } = useSWRConfig()
   const [newContact, setNewContact] = useState<Partial<ContactObjType>>(initContactObj);
   const [appState, setAppState] = useState<AppState>(initAppState);
   const [file, setFile] = useState<File | null>(null);
-  const { darkMode, appModal, setAppModal } = useContactContext() as ContactContextType
+  const { darkMode, editContact, setEditContact, appModal, setAppModal } = useContactContext() as ContactContextType
   const GENDER = ['Male', 'Female', 'Undecided']
 
   const { firstName, lastName, email, description, occupation, imageUrl, country, address, gender, socialMediaAccounts } = newContact;
+
+  const { edit, contact } = editContact;
 
   const { isLoading, success, error, isError } = appState;
 
@@ -33,6 +38,15 @@ export const NewContact = () => {
       setNewContact(prev => ({...prev, [name]: value}))
     }
   }
+
+  useEffect(() => {
+    let isMounted = true;
+    if (isMounted) setNewContact(contact);
+    else return
+    return () => {
+      isMounted = false
+    }
+  }, [edit, contact])
 
   useEffect(() => {
     let isMounted = true
@@ -74,22 +88,30 @@ export const NewContact = () => {
 
   const canSubmit = [firstName, lastName, imageUrl].every(Boolean)
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if(!canSubmit) return
     setAppState(prev => ({ ...prev, loading: true }))
     try{
       const userDetails = sanitizeEntries(newContact)
       console.log(userDetails)
-      
+
+      if (!edit) {
+        const contactResponse = await addContact(userDetails)
+        mutate(contactEndpoint, contactResponse)
+      }
+      else {
+        const contactResponse = await updateContact(userDetails as ContactObjType)
+        mutate(contactEndpoint, contactResponse)
+      }
       setAppState(prev => ({ ...prev, success: true }))
       setNewContact(initContactObj)
-      toast.success('Contact Created')
+      toast.success('Contact Added')
       setAppModal(prev => ({...prev, addContact: 'CLOSE'}))
     }
     catch(error: unknown){
       console.log(error)
       setAppState(prev => ({ ...prev, isError: true }))
-      toast.error('error message')
+      toast.error('Error save contact')
     }
     finally{
       setAppState(prev => ({ ...prev, loading: false }))
@@ -111,16 +133,21 @@ export const NewContact = () => {
     })
   }
 
+  const closeModal = () => {
+    setAppModal(prev => ({...prev, addContact: 'CLOSE'}))
+    setEditContact(initEditContact)
+  }
+
   return (
-    <section className={`z-20 ${appModal.addContact === 'OPEN' ? 'fixed' : 'hidden'} ${darkMode === 'dark' ? 'bg-gradient-to-t from-slate-900 to-slate-800' : 'bg-gradient-to-tr from-slate-200 to-slate-50'} h-full w-full rounded-lg inset-0 flex items-center justify-center transition-colors`}>
+    <section className={`z-20 ${appModal.addContact === 'OPEN' ? 'fixed' : 'hidden'} ${darkMode === 'dark' ? 'bg-gradient-to-t from-slate-900 to-slate-800' : 'bg-gradient-to-tr from-purple-100 to-slate-50'} h-full w-full rounded-lg inset-0 flex items-center justify-center transition-colors`}>
       <button 
-      onClick={() => setAppModal(prev => ({...prev, addContact: 'CLOSE'}))}
+      onClick={closeModal}
       className={`absolute top-5 right-5 focus:outline-0 rounded-[3px] hover:opacity-90 transition-all border-0 px-2 py-1 ${darkMode === 'dark' ? 'bg-slate-900' : 'bg-slate-400'}`}>
         Close
       </button>
 
-      <article className={`z-10 ${darkMode === 'dark' ? 'bg-gradient-to-tr from-slate-800 to-slate-900' : 'bg-gradient-to-l from-slate-300 to-slate-400 shadow-slate-300'} w-[30rem] maxscreen:w-[87%] h-[88%] rounded-lg shadow-lg absolute bottom-5 flex flex-col gap-y-3 p-5`}>
-        <h4 className='text-base underline underline-offset-4 font-serif absolute left-2 top-2'>Create Contact</h4>
+      <article className={`z-10 ${darkMode === 'dark' ? 'bg-gradient-to-tr from-slate-800 to-slate-900' : 'bg-gradient-to-b from-slate-100 to-slate-300 shadow-slate-300'} border-2 w-[30rem] maxscreen:w-[87%] h-[88%] rounded-lg shadow-lg absolute bottom-5 flex flex-col gap-y-3 p-5`}>
+        <h4 className='text-base underline underline-offset-4 font-serif absolute left-2 top-2'>{edit ? 'Edit' : 'Create'} Contact</h4>
         <button 
         onClick={() => deleteImage(imageUrl as string)}
         className={`${success ? '' : 'hidden'} absolute z-10 right-44 focus:outline-0 rounded-[3px] hover:opacity-90 transition-all border-0 px-2 py-1 ${darkMode === 'dark' ? 'bg-slate-800' : ''}`}>
@@ -205,7 +232,7 @@ export const NewContact = () => {
                 <button
                   key={gen}
                   onClick={() => setNewContact(prev => ({...prev, gender: gen as Gender}))}
-                  className={`${gen === gender ? 'bg-slate-600' : ''} focus:outline-0 rounded-sm px-2.5 py-1.5 border-0 bg-slate-700`}
+                  className={`${gen === (gender as Gender) ? 'bg-slate-500' : 'bg-slate-700'} focus:outline-0 rounded-sm px-2 py-1 border-0`}
                 >{gen}</button>
               ))
             }

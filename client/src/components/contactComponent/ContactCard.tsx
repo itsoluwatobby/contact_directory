@@ -1,6 +1,7 @@
 import { CiShoppingTag } from "react-icons/ci";
 import { Button } from "../Button";
 import { reduceTextLength } from "../../utils/helpers";
+import { useContactContext } from "../../context/useContactContext";
 
 type ContactCardProps = {
   darkMode: Theme;
@@ -8,6 +9,12 @@ type ContactCardProps = {
 }
 export const ContactCard = ({ darkMode, contact }: ContactCardProps) => {
   const { firstName, lastName, occupation, imageUrl } = contact;
+  const { setEditContact, setAppModal } = useContactContext() as ContactContextType;
+
+  const handleEdit = () => {
+    setEditContact({ edit: true, contact })
+    setAppModal(prev => ({...prev, addContact: 'OPEN'}))
+  }
 
   return (
     <main title={`View ${firstName}'s contact`} className={`rounded-tr-xl rounded-bl-xl shadow-md hover:scale-[1.001] transition-all min-w-40 h-56 px-2 pt-5 pb-2 flex flex-col items-center justify-between ${darkMode === 'light' ? 'bg-gradient-to-t from-slate-50 to-slate-200 shadow-slate-600' : 'bg-gradient-to-t from-slate-800 to-slate-900'}`}>
@@ -34,7 +41,7 @@ export const ContactCard = ({ darkMode, contact }: ContactCardProps) => {
           textValue="Edit" textSize="text-[13px]"
           padding={{ px: 'px-3', py: 'py-0.5' }}
           bgColor={darkMode === 'dark' ? "bg-slate-700" : 'bg-slate-500'}
-          handleClick={() => {}} />
+          handleClick={handleEdit} />
 
         <Button 
           textValue="view" textSize="text-[13px]"

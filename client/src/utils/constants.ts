@@ -11,6 +11,14 @@ export const initContactObj: Partial<ContactObjType> = {
   address: '', socialMediaAccounts: [], country: ''
 }
 
+export const initEditContact: EditContact = {
+  edit: false, contact: {} as ContactObjType
+};
+
+export const iniViewDetail: ViewDetailType = {
+  isLoading: false, isError: false, contact: {} as ContactObjType
+};
+
 export const initAppState: AppState = {
   isLoading: false, isError: false, error: '', success: false
 }
