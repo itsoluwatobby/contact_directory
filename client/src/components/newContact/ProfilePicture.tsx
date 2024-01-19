@@ -1,7 +1,4 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-// import { imageStorage } from "../../utils/firebase";
-// import { deleteObject, ref } from "firebase/storage";
-// import { FaTimesCircle } from "react-icons/fa";
 import { LoadingSpinner } from "../Loading";
 import { MAX_FILE_SIZE } from "../../utils/constants";
 import { imageUpload } from "../../utils/helpers";
@@ -52,23 +49,6 @@ export const ProfilePicture = ({ imageUrl, isError, isLoading, setNewContact, se
     }
   }, [file, setNewContact, setAppState])
 
-  // const deleteImage = (image: string) => {
-  //   if(!imageUrl) return;
-  //   setAppState(prev => ({...prev, isLoading: true}))
-  //   const imageName = image?.split('?alt=')[0]?.split(`contact_photos%2F`)[1]
-  //   return new Promise((resolve, reject) => {
-  //     const deleteRef = ref(imageStorage, `contact_photos/${imageName}`)
-  //     deleteObject(deleteRef)
-  //     .then(() => {
-  //       setNewContact(prev => ({...prev, imageUrl: '' }))
-  //       resolve('successful')
-  //     })
-  //     .catch(() => reject(
-  //       setAppState(prev => ({...prev, isError: true, error: 'An Error occurred'}))
-  //       ))
-  //     .finally(() => setAppState(prev => ({ ...prev, isLoading: false })))
-  //   })
-  // }
 
   return (
     <>
@@ -77,7 +57,7 @@ export const ProfilePicture = ({ imageUrl, isError, isLoading, setNewContact, se
         className={`${imageUrl ? '' : 'hidden'} absolute z-10 right-44 focus:outline-0 rounded-[3px] hover:opacity-90 transition-all border-0 px-2 py-1 ${darkMode === 'dark' ? 'bg-slate-800' : ''}`}>
           <FaTimesCircle className='text-gray-400 text-2xl' />
         </button> */}
-        <span className='absolute right-32 top-24 rounded-sm bg-slate-300 px-1.5 py-0.5 text-xs text-gray-800 z-10'>required*</span>
+        <span className='absolute right-32 mobile:right-16 top-24 rounded-sm bg-slate-300 px-1.5 py-0.5 text-xs text-gray-800 z-10'>required*</span>
         <label htmlFor='profileImage' className={`relative cursor-pointer self-center bg-gray-300 border-2 ${isError ? 'border-red-400' : ''} border-r-gray-400 border-l-gray-400 border-t-gray-500 border-b-gray-500 w-28 h-28 rounded-full shadow-sm`}>
           {
             imageUrl ? 

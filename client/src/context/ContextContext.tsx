@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { initAppModal, initAppState, initEditContact } from "../utils/constants";
+import { initAppModal, initAppState, initEditContact, initUserInfo } from "../utils/constants";
 import { getContacts } from "../api/axios";
 import { toast } from "react-toastify";
 
@@ -13,6 +13,13 @@ export const ContactDataProvider = ({ children }: ChildrenProps) => {
   const [allContacts, setAllContacts] = useState<ContactObjType[]>([]);
   const [appState, setAppState] = useState<AppState>(initAppState);
   const [revalidate, setRevalidate] = useState<number>(0);
+  const [user, setUser] = useState<UserObjType>(initUserInfo as UserObjType);
+  const [canProceed, setCanProceed] = useState<CanProceedType>(
+    {
+      proceed: (typeof window !== 'undefined' && window.localStorage.getItem('contact_userId')) ? true : false,
+      openForm: false
+    }
+  )
 
   useEffect(() => {
     let isMounted = true
@@ -35,8 +42,9 @@ export const ContactDataProvider = ({ children }: ChildrenProps) => {
       })
       .catch((error) => {
         const errors = error as ErrorResponse
-        toast.error(errors.response.data.message)
-        setAppState(prev => ({...prev, isError: true}))
+        const msg = errors.response.data.message ?? error.message
+        toast.error(msg)
+        setAppState(prev => ({...prev, isError: true, error: msg}))
       })
       .finally(() => setAppState(prev => ({...prev, isLoading: false})))
     }
@@ -59,7 +67,8 @@ export const ContactDataProvider = ({ children }: ChildrenProps) => {
   }, [appState.isError, setAppState])
 
   const value = {
-    darkMode, setDarkMode, appModal, setAppModal, allContacts, setAllContacts, contactId, setContactId, editContact, setEditContact, appState, setRevalidate
+    darkMode, setDarkMode, appModal, setAppModal, allContacts, setAllContacts, contactId, setContactId, editContact, setEditContact, appState, setRevalidate, user, setUser,
+    canProceed, setCanProceed
   }
   return (
     <ContactContext.Provider value={value}>

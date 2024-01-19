@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeEvent, useEffect, useState } from 'react'
 import { MAX_TEXT, initAppState, initContactObj, initEditContact } from '../utils/constants'
 import { sanitizeEntries } from '../utils/helpers';
@@ -11,11 +12,10 @@ import { ProfilePicture } from './newContact/ProfilePicture';
 export const NewContact = () => {
   const [newContact, setNewContact] = useState<Partial<ContactObjType>>(initContactObj);
   const [loading, setLoading] = useState<boolean>(false);
-  const [enterMoreDetails, setEnterMoreDetails] = useState<Toggle>('CLOSE');
   const [appState, setAppState] = useState<AppState>(initAppState);
-  const [socialMedia, setSocialMedia] = useState<SocialMedia[]>([])
-  const { darkMode, setAllContacts, setRevalidate, editContact, setEditContact, appModal, setAppModal } = useContactContext() as ContactContextType
+  const { darkMode, setRevalidate, allContacts, setAllContacts, editContact, setEditContact, appModal, setAppModal } = useContactContext() as ContactContextType
   const GENDER = ['Male', 'Female', 'Undecided']
+  const userId = typeof window !== 'undefined' ? window.localStorage.getItem('contact_userId') : ''
 
   const { firstName, lastName, email, description, occupation, imageUrl, country, address, gender } = newContact;
 
@@ -56,20 +56,22 @@ export const NewContact = () => {
     try{
       const userDetails = sanitizeEntries(newContact) as ContactObjType
       if (!edit) {
-        const contactResponse = await addContact(userDetails);
-        setAllContacts(prev => ([...prev, contactResponse]))
+        const contactResponse = await addContact(userDetails, userId as string);
+        if(!allContacts.length) setRevalidate(1)
+        else setAllContacts([...allContacts, contactResponse])
       }
       else {
-        await updateContact(userDetails as ContactObjType)
+        await updateContact(userDetails as ContactObjType, userId as string)
         setRevalidate(1)
       }
       setNewContact(initContactObj)
       toast.success(edit ? 'Contact updated' :  'Contact Added')
       setAppModal(prev => ({...prev, addContact: 'CLOSE'}))
     }
-    catch(error: unknown){
+    catch(error: any){
       const errors = error as ErrorResponse
-      toast.error(errors.response.data.message)
+      const msg = errors.response.data.message ?? error?.message
+      toast.error(msg)
     }
     finally{
       setLoading(false)
@@ -122,9 +124,7 @@ export const NewContact = () => {
           maxTextLength={MAX_TEXT}
           setNewContact={setNewContact}
         />
-        
-        {
-        enterMoreDetails === 'CLOSE' ?
+
           <div className='flex flex-col gap-y-3'>
 
             <div className='flex items-center gap-2 sm:justify-between'>
@@ -172,24 +172,7 @@ export const NewContact = () => {
               </div>
             </div>
           </div>
-          :
-          <div className='flex items-center gap-2 sm:justify-between'>
-            <Input 
-              value={'' as string}
-              placeholder="Address"
-              name="address" show={false}
-              handleInput={handleInput}          
-            />
-            
-          </div>
-        }
-        <button title='Enter more details' className={`self-end flex w-20 h-5 rounded-[30px] p-0.5 cursor-default ${enterMoreDetails === 'CLOSE' ? 'bg-blue-600' : 'bg-blue-500'} transition-colors`}>
-          <div 
-          onClick={() => setEnterMoreDetails(prev => prev === 'OPEN' ? 'CLOSE' : 'OPEN')}
-          className={`z-10 ${enterMoreDetails === 'CLOSE' ? 'bg-slate-100' : 'translate-x-10 bg-slate-300'} hover:opacity-90 active:opacity-100 transition-all duration-300 rounded-full h-full w-[48%] cursor-pointer`}/>
-        </button>
-        <span className='text-xs self-end text-gray-300'>Enter more details</span>
-
+        
         <button 
           disabled={!canSubmit}
           onClick={handleSubmit}

@@ -14,7 +14,7 @@ export const Navbar = () => {
         className="hidden midscreen:block text-3xl cursor-pointer hover:scale-[1.002] active:scale-[1] transition-transform"/>
         {
           pathname === '/' ?
-          <h3 className="font-medium text-lg cursor-default"></h3>
+          <h3 className="font-medium text-lg cursor-default text-center">Built with React & Nodejs</h3>
           :
           <h3 className="font-medium text-lg cursor-default">Contacts</h3>
         }

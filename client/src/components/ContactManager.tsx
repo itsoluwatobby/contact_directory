@@ -12,8 +12,10 @@ export const ContactManager = () => {
   const [search, setSearch] = useState<string>('')
   const { darkMode, appState, setAppModal, allContacts } = useContactContext()
   const [ filteredContacts, setFilteredContacts ] = useState<ContactObjType[]>([])
+  const userId = typeof window !== 'undefined' ? window.localStorage.getItem('contact_userId') : ''
 
-  const { isLoading, error } = appState
+
+  const { isLoading, error, isError } = appState
 
   const handleSearch = (event: ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)
 
@@ -27,17 +29,6 @@ export const ContactManager = () => {
         )
     }))
   }, [search, allContacts])
-
-  // const handleContactDelete = async (contactId: string) => {
-  //   try{
-  //     await deleteContact(contactId)
-  //     toast.success('Contact Removed')
-  //   }
-  //   catch(error: unknown){
-  //     const errors = error as ErrorResponse
-      // toast.error(errors.response.data.message)
-  //   }
-  // }
 
   const sortedContacts = filteredContacts?.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   return (
@@ -61,16 +52,16 @@ export const ContactManager = () => {
         isLoading ?   
           <LoadingSpinner />
         :
-        error ? 
-          <p className="text-3xl mt-5 text-red-400 capitalize text-center">{'An error occured'}</p>
+        isError ? 
+          <p className="text-3xl mt-5 text-red-400 capitalize text-center">{error}</p>
         :
         <section className="grid lg:grid-cols-4 grid-cols-3 maxmobile:grid-cols-2 gap-y-5 gap-x-6 maxmobile:gap-8 px-3">
         { 
-          sortedContacts?.length ? 
+          filteredContacts?.length ? 
             sortedContacts?.map(contact => (
               <ContactCard key={contact._id}
                 darkMode={darkMode} 
-                contact={contact}
+                contact={contact} userId={userId as string}
               />
             ))
           : <p className="absolute left-[28%] text-center text-3xl font-mono mt-3 capitalize">Empty contact list</p>

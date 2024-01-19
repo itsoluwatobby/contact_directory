@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 
 export const Sidebar = () => {
-  const { darkMode, setDarkMode, appModal, setAppModal } = useContactContext() as ContactContextType;
+  const { darkMode, setDarkMode, appModal, setAppModal, canProceed, setCanProceed } = useContactContext() as ContactContextType;
   const { pathname } = useLocation()
   const navigate = useNavigate()
 
@@ -51,7 +51,11 @@ export const Sidebar = () => {
           Home
         </button>
         <button 
-        onClick={() => navigate('/contact_directory')}
+        onClick={() => {
+          canProceed.proceed ?
+          navigate('/contact_directory')
+          : setCanProceed(prev => ({...prev, openForm: true}))
+        }}
         className={`w-full py-3 focus:outline-0 bg-slate-700 rounded-3xl hover:opacity-90 active:opacity-100 transition-opacity`}>
           Get Started
         </button>

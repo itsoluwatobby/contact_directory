@@ -11,6 +11,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import Home from "./pages/Home"
 import { Contact } from "./pages/Contact"
 import { ViewContact } from "./components/ViewContact"
+import { ProtectedRoute } from "./layout/ProtectedRoute"
 
 
 let prevPathname = '';
@@ -39,8 +40,13 @@ function App() {
       <Sidebar />
       <Routes>
         <Route path='/'>
+          
           <Route index element={<Home />} />
-          <Route path='/contact_directory' element={<Contact />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route path='/contact_directory' element={<Contact />} />
+          </Route>
+
         </Route>
       </Routes>
 

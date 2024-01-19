@@ -1,18 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { useContactContext } from "../context/useContactContext"
 import { LoadingSpinner } from "./Loading";
-import { checkCount, reduceTextLength } from "../utils/helpers";
+import { checkCount, deleteImage, reduceTextLength } from "../utils/helpers";
 import { CiShoppingTag } from "react-icons/ci";
 import { initAppState, initContactObj } from "../utils/constants";
-import { viewContact } from "../api/axios";
+import { deleteContact, viewContact } from "../api/axios";
 import { format } from "timeago.js";
 import { toast } from "react-toastify";
 
 
 export const ViewContact = () => {
-  const { darkMode, contactId, setContactId, appModal, setAppModal } = useContactContext() as ContactContextType;
+  const { darkMode, contactId, setContactId, appModal, setAppModal, setRevalidate } = useContactContext() as ContactContextType;
   const [appState, setAppState] = useState<AppState>(initAppState);
-  const [contact, setContact] = useState<ContactObjType>(initContactObj as ContactObjType)
+  const [loading, setLoading] = useState<boolean>(false);
+  const [contact, setContact] = useState<ContactObjType>(initContactObj as ContactObjType);
+  const userId = typeof window !== 'undefined' ? window.localStorage.getItem('contact_userId') as string : ''
+
   
   const { isLoading, isError } = appState;
 
@@ -24,10 +28,12 @@ export const ViewContact = () => {
       await viewContact(contactId)
       .then((res) => {
         setContact(res)
+        setRevalidate(1)
       })
       .catch((error) => {
         const errors = error as ErrorResponse
-        toast.error(errors.response.data.message)
+        const msg = errors.response.data.message ?? error?.message
+        toast.error(msg)
         setAppState(prev => ({...prev, isError: true}))
       })
       .finally(() => setAppState(prev => ({...prev, isLoading: false})))
@@ -37,9 +43,9 @@ export const ViewContact = () => {
     return () => {
       isMounted = false;
     }
-  }, [contactId])
+  }, [contactId, setRevalidate])
   
-  const { firstName, lastName, imageUrl, email, occupation, description, country, address, gender, createdAt, viewsCount } = contact as ContactObjType;
+  const { firstName, lastName, imageUrl, email, occupation, description, country, address, gender, createdAt, updatedAt, viewsCount } = contact as ContactObjType;
   
   useEffect(() => {
     if(!isError) return
@@ -51,12 +57,32 @@ export const ViewContact = () => {
       clearTimeout(timeoutId)
     }
   }, [isError, setAppModal])
-  
+
   const closeModal = () => {
     setContactId('')
     setAppModal(prev => ({...prev, viewContact: 'CLOSE'}))
     setContact(initContactObj as ContactObjType)
   }
+
+  const handleContactDelete = async () => {
+    setLoading(true)
+    try{
+      await deleteContact(contactId, userId);
+      await deleteImage(contact.imageUrl);
+      toast.success('Contact Removed')
+      setRevalidate(1)
+      closeModal()
+    }
+    catch(error: any){
+      const errors = error as ErrorResponse
+      const msg = errors.response.data.message ?? error?.message
+      toast.error(msg ?? errors)
+    }
+    finally{
+      setLoading(false)
+    }
+  }
+  
 
   return (
     <section className={`z-20 ${appModal.viewContact === 'OPEN' ? 'fixed' : 'hidden'} ${darkMode === 'dark' ? 'bg-gradient-to-t from-slate-900 to-slate-800' : 'bg-gradient-to-tr from-purple-100 to-slate-50'} h-full w-full rounded-lg inset-0 flex items-center justify-center transition-colors`}>
@@ -125,12 +151,21 @@ export const ViewContact = () => {
 
           <DataEntry title="Address: " content={reduceTextLength(address as string, 50)} />
 
-          <DataEntry title="Updated: " content={format(createdAt)} />
-          <button 
-            onClick={closeModal}
-            className={`self-end w-[35%] absolute bottom-5 focus:outline-0 mt-3 rounded-[3px] hover:opacity-90 transition-all border-0 px-5 py-3 text-white ${darkMode === 'dark' ? 'bg-slate-700' : 'bg-slate-700'}`}>
-            Close
-          </button>
+          <DataEntry title="Updated: " content={format(updatedAt)} />
+
+          {/* <div className='flex items-center justify-between w-full'> */}
+            <button 
+              onClick={handleContactDelete}
+              className={`self-start ${contact.userId === userId ? 'block' : 'hidden'} w-fit absolute bottom-5 focus:outline-0 mt-3 rounded-[3px] hover:opacity-90 transition-all border-0 px-6 py-3 text-white ${darkMode === 'dark' ? 'bg-red-700' : 'bg-red-700'}`}>
+              {loading ? 'Removing...' : 'Delete'}
+            </button>
+
+            <button 
+              onClick={closeModal}
+              className={`self-end w-fit absolute bottom-5 focus:outline-0 mt-3 rounded-[3px] hover:opacity-90 transition-all border-0 px-6 py-3 text-white ${darkMode === 'dark' ? 'bg-slate-700' : 'bg-slate-700'}`}>
+              Close
+            </button>
+          {/* </div> */}
         </article>
       }
     </section>

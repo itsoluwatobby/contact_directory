@@ -8,7 +8,7 @@ export const initAppModal: AppModalType = {
 export const initContactObj: Partial<ContactObjType> = {
   firstName: '', lastName: '', gender: 'Undecided', email: '',
   occupation: '', description: '', imageUrl: '',
-  address: '', socialMediaAccounts: [], country: ''
+  address: '', country: ''
 }
 
 export const initEditContact: EditContact = {
@@ -17,4 +17,8 @@ export const initEditContact: EditContact = {
 
 export const initAppState: AppState = {
   isLoading: false, isError: false, error: '', success: false
+}
+
+export const initUserInfo: Partial<UserObjType> = {
+  email: '', username: ''
 }

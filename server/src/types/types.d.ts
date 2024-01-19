@@ -23,28 +23,36 @@ type FuncArgsType = {
   query?: string 
 }
 
-type SocialMedia = {
-  name: string,
-  link: string,
-}
+// type SocialMedia = {
+//   name: string,
+//   link: string,
+// }
 
 interface ContactObj extends Document {
   _id?: string,
+  userId: string,
   firstName: string; 
   lastName: string; 
   email?: string;
-  owner?: string;
   occupation?: string;
-  ipAddress: string,
   imageUrl: string,
   address?: string,
   country?: string,
   description?: string,
   gender: 'Male' | 'Female' | 'Undecided',
   viewsCount: number,
-  socialMediaAccounts?: SocialMedia[],
 }
 
 interface ContactRequest extends Request {
   body: Partial<ContactObj>;
+}
+
+interface UserObj extends Document {
+  _id?: string;
+  email: string;
+  username: string;
+}
+
+interface UserRequest extends Request {
+  body: Partial<UserObj>;
 }

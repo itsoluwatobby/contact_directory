@@ -9,45 +9,24 @@ import { logger } from "../config/logger.js";
 export class ContactController {
   private contactService = new ContactService()
   private response = new ResponseObj()
-  // private logger = logger
 
   constructor() {}
-
-  public getStarted(req: ContactRequest, res: Response) {
-    wrapperFunc(res, () => {
-      const { email } = req.body
-      if (!email) {
-        const msg = 'email required'
-        logger.error(msg);
-        return this.response.badRequestResponse(res, msg)
-      } 
-      const sanitizeContact = sanitizeEntries({ owner: email }) as ContactObj
-      this.contactService.createContact(sanitizeContact, (err: any, data: any) => {
-        if (err) {
-          logger.error(err.message);
-          return this.response.resourceConflictResponse(res, err.message)
-        }
-        logger.info('Registered');
-        return this.response.successResponse(res, 'Contact created', { data: data._doc })
-      })
-    })
-  }
 
   public createContact(req: ContactRequest, res: Response) {
     wrapperFunc(res, () => {
       const contactDetails = req.body
-      const ipAddress = req.ip
+      const { userId } = req.params
       const { firstName, lastName, imageUrl, gender } = contactDetails
-      if (!firstName || !lastName || !imageUrl || !gender) {
+      if (!firstName || !lastName || !imageUrl || !gender || !userId) {
         const msg = 'FirstName, LastName and Image required'
         logger.error(msg);
         return this.response.badRequestResponse(res, msg)
       } 
-      const sanitizeContact = sanitizeEntries({...contactDetails, ipAddress}) as ContactObj
+      const sanitizeContact = sanitizeEntries({...contactDetails, userId}) as ContactObj
       this.contactService.createContact(sanitizeContact, (err: any, data: any) => {
         if (err) {
           logger.error(err.message);
-          return this.response.resourceConflictResponse(res, err.message)
+          return this.response.resourceConflictResponse(res, 'Email taken')
         }
         logger.info('Contact created');
         return this.response.successResponse(res, 'Contact created', { data: data._doc })
@@ -77,8 +56,7 @@ export class ContactController {
   }
   public getAllContacts(req: ContactRequest, res: Response) {
     wrapperFunc(res, () => {
-      const { ipAddress } = req.params;
-      this.contactService.getContacts({ ipAddress }, (err: any, data: ContactObj[]) => {
+      this.contactService.getContacts({}, (err: any, data: ContactObj[]) => {
         if (err) {
           logger.error(err.message);
           return this.response.mongoErrorResponse(res, err.message);
@@ -97,8 +75,8 @@ export class ContactController {
     wrapperFunc(res, () => {
       const { email } = req.params
       if (!email) {
-        logger.error('Contact ID required');
-        return this.response.badRequestResponse(res, 'Contact ID required');
+        logger.error('UserID and email required');
+        return this.response.badRequestResponse(res, 'UserID and email required');
       } 
       this.contactService.getContact({ email }, (err: any, data: ContactObj) => {
         if (err) {
@@ -116,8 +94,9 @@ export class ContactController {
   }
   public updateContact(req: ContactRequest, res: Response) {
     wrapperFunc(res, () => {
+      const { userId } = req.params;
       const contactUpdate = req.body
-      if (contactUpdate.ipAddress !== req.ip) {
+      if (contactUpdate.userId !== userId) {
         const msg = "You don't have the WRITE access to this document"
         logger.error(msg);
         return this.response.unauthorizedResponse(res, msg);
@@ -135,8 +114,8 @@ export class ContactController {
   }
   public deleteContact(req: ContactRequest, res: Response) {
     wrapperFunc(res, () => {
-      const { contactId } = req.params
-      if (!contactId) {
+      const { contactId, userId } = req.params
+      if (!contactId || !userId) {
         logger.error('Contact ID required');
         return this.response.badRequestResponse(res, 'Contact ID required');
       } 
@@ -149,11 +128,14 @@ export class ContactController {
           logger.error('Contact not found')
           return this.response.notFoundResponse(res, 'contact not found');
         }
+        if (data.userId.toString() !== userId) {
+          const msg = "You don't have the WRITE access to this document"
+          logger.error(msg);
+          return this.response.unauthorizedResponse(res, msg);
+        }
         logger.info('Contact deleted');
         return this.response.successDeleteResponse(res, 'Contact deleted', {_id: data._id});
       })
     })
   }
 }
-
-// export default new ContactController()

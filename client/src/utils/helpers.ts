@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage'
 import { nanoid } from 'nanoid';
 import { imageStorage } from './firebase';
 
@@ -78,6 +78,17 @@ export const imageUpload = (image: File): Promise<ImageReturnType> => {
         })
       }
     )
+  })
+}
+
+export const deleteImage = (image: string) => {
+  if(!image) return;
+  const imageName = image?.split('?alt=')[0]?.split(`contact_photos%2F`)[1]
+  return new Promise((resolve, reject) => {
+    const deleteRef = ref(imageStorage, `contact_photos/${imageName}`)
+    deleteObject(deleteRef)
+    .then(() => resolve('successful'))
+    .catch(() => reject('An Error occurred'))
   })
 }
 

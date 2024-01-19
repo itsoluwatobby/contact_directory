@@ -1,13 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CiShoppingTag } from "react-icons/ci";
 import { Button } from "../Button";
 import { checkCount, reduceTextLength } from "../../utils/helpers";
 import { useContactContext } from "../../context/useContactContext";
 
+
 type ContactCardProps = {
   darkMode: Theme;
   contact: ContactObjType;
+  userId: string;
 }
-export const ContactCard = ({ darkMode, contact }: ContactCardProps) => {
+export const ContactCard = ({ darkMode, contact, userId }: ContactCardProps) => {
   const { firstName, lastName, occupation, imageUrl } = contact;
   const { setEditContact, setAppModal, setContactId } = useContactContext() as ContactContextType;
 
@@ -27,7 +30,8 @@ export const ContactCard = ({ darkMode, contact }: ContactCardProps) => {
         title={`${checkCount(contact.viewsCount)} visits`}
          className={`absolute top-0 left-0 font-medium cursor-default rounded-md border shadow-sm w-fit p-2 ${darkMode === 'dark' ? 'border-slate-800' : 'border-slate-200'}`}>
           {checkCount(contact.viewsCount)}
-        </div>
+      </div>
+
       <figure className="bg-gray-300 border-2 border-r-gray-400 border-l-gray-400 border-t-gray-500 border-b-gray-500 w-20 h-20 rounded-full shadow-sm">
         {
           imageUrl ? 
@@ -47,12 +51,16 @@ export const ContactCard = ({ darkMode, contact }: ContactCardProps) => {
       </div>
 
       <div className="self-baseline flex items-center justify-between w-full">
-        <Button 
+        {
+          contact.userId === userId ?
+          <Button 
           textValue="Edit" textSize="text-[13px]" 
           color={darkMode === 'dark' ? 'text-white' : 'text-black'}
           padding={{ px: 'px-3', py: 'py-0.5' }}
           bgColor={darkMode === 'dark' ? "bg-slate-700" : 'bg-slate-300'}
           handleClick={handleEdit} />
+          : null
+        }
 
         <Button 
           textValue="view" textSize="text-[13px]"
