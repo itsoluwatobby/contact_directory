@@ -102,9 +102,3 @@ export const switchModals: Record<Modals, (arg: AppModalType) => AppModalType> =
     return { sideBar, ...toggleAttributes(rest, 'CLOSE') } as AppModalType;
   }
 }
-
-// const formatDate = (date: string) => {
-//   return new Intl.RelativeTimeFormat('en-us', {
-    
-//   })
-// }

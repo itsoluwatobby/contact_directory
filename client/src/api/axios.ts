@@ -39,7 +39,7 @@ export const addContact = async (newContact: Partial<ContactObjType>): Promise<C
   return response.data.DATA.data
 }
 export const viewContact = async (contactId: string): Promise<ContactObjType> => {
-  const response = await contactApi.patch(`/view_contact/:${contactId}`) as { data: SingleResponseType };
+  const response = await contactApi.patch(`/view_contact/${contactId}`) as { data: SingleResponseType };
   return response.data.DATA.data
 }
 export const updateContact = async (updatedContact: ContactObjType) => {
@@ -47,6 +47,6 @@ export const updateContact = async (updatedContact: ContactObjType) => {
   return response.data.DATA.data
 }
 export const deleteContact = async (contactId: string) => {
-  return await contactApi.delete(`/delete/:${contactId}`)
+  return await contactApi.delete(`/delete/${contactId}`)
   // return response.data
 }

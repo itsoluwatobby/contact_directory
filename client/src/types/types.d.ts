@@ -11,23 +11,23 @@ type EditContact = {
   edit: boolean;
   contact: ContactObjType;
 }
-type ViewDetailType = {
-  isLoading: boolean;
-  isError: boolean;
-  contact: ContactObjType;
-}
+
 type Modals = 'addContact' | 'viewContact' | 'sideBar';
 type AppModalType = Record<Modals, Toggle>;
 
 type ContactContextType = {
   darkMode: Theme;
+  appState: AppState;
   appModal: AppModalType;
   editContact: EditContact;
-  viewDetail: ViewDetailType;
+  contactId: string;
+  allContacts: ContactObjType[];
   setDarkMode: React.Dispatch<React.SetStateAction<Theme>>;
+  setAllContacts: React.Dispatch<React.SetStateAction<ContactObjType[]>>;
   setAppModal: React.Dispatch<React.SetStateAction<AppModalType>>;
   setEditContact: React.Dispatch<React.SetStateAction<EditContact>>;
-  setViewDetail: React.Dispatch<React.SetStateAction<ViewDetailType>>;
+  setContactId: React.Dispatch<React.SetStateAction<string>>;
+  setRevalidate: React.Dispatch<React.SetStateAction<number>>;
 }
 
 type ImageReturnType = { status: string, url: string };
@@ -62,4 +62,13 @@ type ContactObjType = {
   socialMediaAccounts?: SocialMedia[];
   createdAt: string;
   updatedAt: string;
+}
+
+type ErrorResponse = {
+  response: {
+    data: {
+      status: number;
+      message: string;
+    }
+  }
 }
