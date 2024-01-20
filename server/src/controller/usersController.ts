@@ -22,7 +22,7 @@ export class UserController {
         return this.response.badRequestResponse(res, msg)
       } 
       const user = await this.getUser(email)
-      if (user !== null) {
+      if (user !== null && user.username === username) {
         logger.info('Account fetched');
         return this.response.successResponse(res, 'Account fetched', { data: user })
       }
