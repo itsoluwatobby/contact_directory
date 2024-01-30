@@ -81,6 +81,7 @@ export const NewContact = () => {
   const closeModal = () => {
     setAppModal(prev => ({...prev, addContact: 'CLOSE'}))
     setEditContact(initEditContact)
+    setNewContact(initContactObj)
   }
 
   return (
