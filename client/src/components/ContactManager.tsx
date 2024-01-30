@@ -4,8 +4,6 @@ import { ContactCard } from "./contactComponent/ContactCard"
 import { Button } from "./Button";
 import { useContactContext } from "../context/useContactContext";
 import { LoadingSpinner } from "./Loading";
-// import { deleteContact } from '../api/axios'
-// import { toast } from "react-toastify";
 
 
 export const ContactManager = () => {
@@ -64,7 +62,12 @@ export const ContactManager = () => {
                 contact={contact} userId={userId as string}
               />
             ))
-          : <p className="absolute left-[28%] text-center text-3xl font-mono mt-3 capitalize">Empty contact list</p>
+          : (
+            search ? 
+              <p className="absolute left-[28%] text-center text-3xl font-mono mt-3 capitalize">Contact {search} not found</p>
+             :
+              <p className="absolute left-[28%] text-center text-3xl font-mono mt-3 capitalize">Empty contact list</p>
+            )
         }
         </section>
       }
