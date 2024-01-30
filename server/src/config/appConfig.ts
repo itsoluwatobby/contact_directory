@@ -10,7 +10,7 @@ import { AppRouter } from "../routes/routes.js";
 dotenv.config()
 
 class AppConfig {
-  private PORT = process.env.PORT || 5000;
+  private PORT = process.env.PORT || 4500;
   private server: ServerType;
   private router = new AppRouter().router
   private mongoUrl = process.env.MONGO_URL as string;
