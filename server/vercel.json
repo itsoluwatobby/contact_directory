@@ -16,7 +16,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/src/server.ts"
+      "dest": "/src/index.ts"
     }
   ]
 }
