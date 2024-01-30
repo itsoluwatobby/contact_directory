@@ -20,7 +20,7 @@ type UserResponseType = {
     data: UserObjType
   } 
 }
-export const BASEURL = 'http://localhost:5000/api/v1'
+export const BASEURL = 'http://localhost:4500/api/v1'
 
 export const contactApi = axios.create({
   baseURL: BASEURL,
