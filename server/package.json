@@ -5,7 +5,6 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "preinstall": "npm i typescript -g",
     "start": "tsc && node dist/index.js",
     "dev": "tsc && nodemon dist/index.js"
   },
