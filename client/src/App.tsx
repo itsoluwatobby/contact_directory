@@ -36,7 +36,7 @@ function App() {
   
 
   return (
-    <main className={`${darkMode === 'dark' ? 'dark:bg-slate-900 text-white' : 'bg-gradient-to-tr from-slate-200 to-slate-50'} transition-colors w-full flex items-start h-screen text-sm mobile:h-[100svh]`}>
+    <main className={`max-w-[1440px] mx-auto ${darkMode === 'dark' ? 'dark:bg-slate-900 text-white' : 'bg-gradient-to-tr from-slate-200 to-slate-50'} transition-colors w-full flex items-start h-screen text-sm mobile:h-[100svh]`}>
       <Sidebar />
       <Routes>
         <Route path='/'>
